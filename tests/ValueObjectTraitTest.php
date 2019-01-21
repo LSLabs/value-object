@@ -2,6 +2,7 @@
 
 namespace LSLabs\ValueObject\Tests;
 
+use LSLabs\ValueObject\ValueObjectInterface;
 use LSLabs\ValueObject\ValueObjectTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -130,7 +131,7 @@ class ValueObjectTraitTest extends TestCase
      * @param string $string2
      * @dataProvider nonIdenticalDataProvider
      */
-    public function test_isSame_ON_not_same_class_or_non_identical_toScalarOrNull_RETURNS_false(
+    public function test_isSame_ON_non_identical_toScalarOrNull_RETURNS_false(
         string $string1,
         string $string2
     ): void
@@ -141,9 +142,23 @@ class ValueObjectTraitTest extends TestCase
         $this->assertFalse($stack1->isSame($stack2));
     }
 
+    /**
+     * @param string $string
+     * @dataProvider conditionMetDataProvider
+     */
+    public function test_isSame_ON_not_same_class_toScalarOrNull_RETURNS_false(
+        string $string
+    ): void
+    {
+        $stack1 = _ValueObjectTrait::fromPrimitive($string);
+        $mock = $this->createMock(ValueObjectInterface::class);
+
+        $this->assertFalse($stack1->isSame($mock));
+    }
+
 }
 
-class _ValueObjectTrait
+class _ValueObjectTrait implements ValueObjectInterface
 {
     use ValueObjectTrait;
 
