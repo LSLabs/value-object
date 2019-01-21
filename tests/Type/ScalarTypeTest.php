@@ -3,7 +3,7 @@
 namespace LSLabs\ValueObject\Tests\Type;
 
 use LSLabs\ValueObject\Type\ScalarType;
-use LSLabs\ValueObject\Ability\ToScalarOrNullInterface;
+use LSLabs\ValueObject\Type\Ability\ToScalarOrNullInterface;
 use PHPUnit\Framework\TestCase;
 
 class ScalarTypeTest extends TestCase

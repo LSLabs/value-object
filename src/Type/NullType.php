@@ -2,7 +2,7 @@
 
 namespace LSLabs\ValueObject\Type;
 
-use LSLabs\ValueObject\Ability\ToScalarOrNullInterface;
+use LSLabs\ValueObject\Type\Ability\ToScalarOrNullInterface;
 
 class NullType implements ScalarOrNullTypeInterface
 {

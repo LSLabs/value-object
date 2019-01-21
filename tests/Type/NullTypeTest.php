@@ -3,7 +3,7 @@
 namespace LSLabs\ValueObject\Tests\Type;
 
 use LSLabs\ValueObject\Type\NullType;
-use LSLabs\ValueObject\Ability\ToScalarOrNullInterface;
+use LSLabs\ValueObject\Type\Ability\ToScalarOrNullInterface;
 use PHPUnit\Framework\TestCase;
 
 class NullTypeTest extends TestCase
