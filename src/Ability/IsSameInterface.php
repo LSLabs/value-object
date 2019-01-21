@@ -2,7 +2,7 @@
 
 namespace LSLabs\ValueObject\Ability;
 
-interface IsSameInterface
+interface IsSameInterface extends ToScalarOrNullInterface
 {
     public function isSame(ToScalarOrNullInterface $compare): bool;
 }
