@@ -2,11 +2,10 @@
 
 namespace LSLabs\ValueObject\Tests;
 
-use LSLabs\ValueObject\ValueObjectInterface;
-use LSLabs\ValueObject\ValueObjectTrait;
+use LSLabs\ValueObject\AbstractValueObject;
 use PHPUnit\Framework\TestCase;
 
-class ValueObjectTraitTest extends TestCase
+class AbstractValueObjectTest extends TestCase
 {
     public function conditionMetDataProvider(): array
     {
@@ -54,8 +53,8 @@ class ValueObjectTraitTest extends TestCase
     public function test_static_fromPrimitive_RETURNS_self($primitive): void
     {
         $this->assertInstanceOf(
-            _ValueObjectTrait::class,
-            _ValueObjectTrait::fromPrimitive($primitive)
+            ValueObject::class,
+            ValueObject::fromPrimitive($primitive)
         );
     }
 
@@ -67,7 +66,7 @@ class ValueObjectTraitTest extends TestCase
         string $string
     ): void
     {
-        $stack = _ValueObjectTrait::fromPrimitive($string);
+        $stack = ValueObject::fromPrimitive($string);
 
         $this->assertTrue(is_scalar($stack->toScalarOrNull()));
         $this->assertSame($string, $stack->toScalarOrNull());
@@ -81,7 +80,7 @@ class ValueObjectTraitTest extends TestCase
         $primitive
     ): void
     {
-        $stack = _ValueObjectTrait::fromPrimitive($primitive);
+        $stack = ValueObject::fromPrimitive($primitive);
 
         $this->assertNull($stack->toScalarOrNull());
     }
@@ -94,7 +93,7 @@ class ValueObjectTraitTest extends TestCase
         string $string
     ): void
     {
-        $stack = _ValueObjectTrait::fromPrimitive($string);
+        $stack = ValueObject::fromPrimitive($string);
 
         $this->assertFalse($stack->isNull());
     }
@@ -107,7 +106,7 @@ class ValueObjectTraitTest extends TestCase
         $primitive
     ): void
     {
-        $stack = _ValueObjectTrait::fromPrimitive($primitive);
+        $stack = ValueObject::fromPrimitive($primitive);
 
         $this->assertTrue($stack->isNull());
     }
@@ -120,8 +119,8 @@ class ValueObjectTraitTest extends TestCase
         string $string
     ): void
     {
-        $stack1 = _ValueObjectTrait::fromPrimitive($string);
-        $stack2 = _ValueObjectTrait::fromPrimitive($string);
+        $stack1 = ValueObject::fromPrimitive($string);
+        $stack2 = ValueObject::fromPrimitive($string);
 
         $this->assertTrue($stack1->isSame($stack2));
     }
@@ -136,8 +135,8 @@ class ValueObjectTraitTest extends TestCase
         string $string2
     ): void
     {
-        $stack1 = _ValueObjectTrait::fromPrimitive($string1);
-        $stack2 = _ValueObjectTrait::fromPrimitive($string2);
+        $stack1 = ValueObject::fromPrimitive($string1);
+        $stack2 = ValueObject::fromPrimitive($string2);
 
         $this->assertFalse($stack1->isSame($stack2));
     }
@@ -150,22 +149,20 @@ class ValueObjectTraitTest extends TestCase
         string $string
     ): void
     {
-        $stack1 = _ValueObjectTrait::fromPrimitive($string);
-        $mock = $this->createMock(ValueObjectInterface::class);
+        $stack1 = ValueObject::fromPrimitive($string);
+        $mock = $this->createMock(AbstractValueObject::class);
 
         $this->assertFalse($stack1->isSame($mock));
     }
 
 }
 
-class _ValueObjectTrait implements ValueObjectInterface
+final class ValueObject extends AbstractValueObject
 {
-    use ValueObjectTrait;
-
     /*
      * for testing the condition is to have an integer(ish) string
      */
-    private static function conditionMet($primitive): bool
+    protected static function conditionMet($primitive): bool
     {
         if (!is_string($primitive) OR !preg_match('/^[0-9]+$/', $primitive)) {
             return false;
@@ -173,4 +170,5 @@ class _ValueObjectTrait implements ValueObjectInterface
 
         return true;
     }
+
 }

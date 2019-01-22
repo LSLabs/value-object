@@ -4,9 +4,11 @@ namespace LSLabs\ValueObject;
 
 use LSLabs\ValueObject\Type\NullableScalarType;
 
-trait ValueObjectTrait
+abstract class AbstractValueObject
 {
     private $nullableScalarType;
+
+    abstract protected static function conditionMet($primitive): bool;
 
     private function __construct(NullableScalarType $nullableScalarType)
     {
@@ -17,11 +19,11 @@ trait ValueObjectTrait
     {
         if (is_scalar($primitive) && static::conditionMet($primitive)) {
 
-            return new self(NullableScalarType::fromScalarOrNull($primitive));
+            return new static(NullableScalarType::fromScalarOrNull($primitive));
 
         }
 
-        return new self(NullableScalarType::fromScalarOrNull(null));
+        return new static(NullableScalarType::fromScalarOrNull(null));
     }
 
     /**
@@ -44,7 +46,7 @@ trait ValueObjectTrait
      * @param $compareObject
      * @return bool
      */
-    public function isSame(ValueObjectInterface $compareObject): bool
+    public function isSame(self $compareObject): bool
     {
         if (!$compareObject instanceof self) {
             return false;
