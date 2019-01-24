@@ -154,7 +154,6 @@ class AbstractValueObjectTest extends TestCase
 
         $this->assertFalse($stack1->isSame($mock));
     }
-
 }
 
 final class ValueObject extends AbstractValueObject

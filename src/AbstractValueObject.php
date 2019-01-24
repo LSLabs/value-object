@@ -4,7 +4,7 @@ namespace LSLabs\ValueObject;
 
 use LSLabs\ValueObject\Type\NullableScalarType;
 
-abstract class AbstractValueObject
+abstract class AbstractValueObject implements ValueObjectInterface
 {
     private $nullableScalarType;
 
