@@ -50,59 +50,77 @@ class AbstractValueObjectTest extends TestCase
         $this->assertFalse($stack->isNull());
     }
 
-    public function test_toArray_RETURNS_array(): void
+    public function test_toArray_RETURNS_an_array_list(): void
     {
+        $scalar1 = 'test';
+        $scalar2 = 1;
+        $scalar3 = true;
+        $array = ['c' => $scalar2, 'd' => $scalar3];
         $primitives = new CompositeDataTransfer();
         $primitives->a = $this->createMock(AbstractConditionalType::class);
-        $primitives->a->method('toScalarOrNull')->willReturn('a string');
-        $primitives->b = $this->createMock(AbstractConditionalType::class);
-        $primitives->b->method('toScalarOrNull')->willReturn('another string');
+        $primitives->a->method('toScalarOrNull')->willReturn($scalar1);
+        $primitives->b = $this->createMock(AbstractValueObject::class);
+        $primitives->b->method('toArray')->willReturn($array);
         $stack = CompositeValueObject::fromPrimitive($primitives);
 
         $this->assertEquals(
-            ['a' => 'a string', 'b' => 'another string'],
+            [
+                'a' => $scalar1,
+                'c' => $scalar2,
+                'd' => $scalar3
+            ],
             $stack->toArray()
         );
     }
 
     public function test_isSame_ON_identical_toArray_RETURNS_true(): void
     {
-        $array['a'] = 'text';
+        $scalar1 = 'test';
+        $scalar2 = 1;
+        $scalar3 = true;
+        $array = ['c' => $scalar2, 'd' => $scalar3];
+
         $primitives = new CompositeDataTransfer();
         $primitives->a = $this->createMock(AbstractConditionalType::class);
-        $primitives->a->method('toScalarOrNull')->willReturn($array['a']);
+        $primitives->a->method('toScalarOrNull')->willReturn($scalar1);
 
-        $array['b'] = ['a' => 12345, 'b' => 5.6];
         $primitives->b = $this->createMock(AbstractValueObject::class);
-        $primitives->b->method('toArray')->willReturn($array['b']);
+        $primitives->b->method('toArray')->willReturn($array);
         $stack = CompositeValueObject::fromPrimitive($primitives);
 
+        $mockArray = [
+            'a' => 'test',
+            'c' => 1,
+            'd' => true
+        ];
         $mock = $this->createMock(AbstractValueObject::class);
-        $mock->method('toArray')->willReturn($array);
+        $mock->method('toArray')->willReturn($mockArray);
 
         $this->assertTrue($stack->isSame($mock));
     }
 
     public function test_isSame_ON_not_identical_toArray_RETURNS_false(): void
     {
-        $array = [
-            'a' => 'text',
-            'b' => ['a' => 12345, 'b' => 5.6]
-        ];
+        $scalar1 = 'test';
+        $scalar2 = 1;
+        $scalar3 = true;
+        $array = ['c' => $scalar2, 'd' => $scalar3];
+
         $primitives = new CompositeDataTransfer();
         $primitives->a = $this->createMock(AbstractConditionalType::class);
-        $primitives->a->method('toScalarOrNull')->willReturn($array['a']);
+        $primitives->a->method('toScalarOrNull')->willReturn($scalar1);
+
         $primitives->b = $this->createMock(AbstractValueObject::class);
-        $primitives->b->method('toArray')->willReturn($array['b']);
+        $primitives->b->method('toArray')->willReturn($array);
         $stack = CompositeValueObject::fromPrimitive($primitives);
 
-
-        $arrayMock = [
-            'a' => 'text',
-            'b' => ['a' => 12345, 'b' => 5.69]
+        $mockArray = [
+            'a' => 'test',
+            'c' => 1,
+            'd' => false
         ];
         $mock = $this->createMock(AbstractValueObject::class);
-        $mock->method('toArray')->willReturn($arrayMock);
+        $mock->method('toArray')->willReturn($mockArray);
 
         $this->assertFalse($stack->isSame($mock));
     }
