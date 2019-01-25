@@ -2,56 +2,55 @@
 
 namespace LSLabs\ValueObject;
 
-use LSLabs\ValueObject\Type\NullableScalarType;
+use LSLabs\ValueObject\Type\AbstractConditionalType;
 
-abstract class AbstractValueObject implements ValueObjectInterface
+abstract class AbstractValueObject
 {
-    private $nullableScalarType;
-
-    abstract protected static function conditionMet($primitive): bool;
-
-    private function __construct(NullableScalarType $nullableScalarType)
+    private function getPrimitive($valueObject)
     {
-        $this->nullableScalarType = $nullableScalarType;
-    }
-
-    public static function fromPrimitive($primitive): self
-    {
-        if (is_scalar($primitive) && static::conditionMet($primitive)) {
-
-            return new static(NullableScalarType::fromScalarOrNull($primitive));
-
+        if ($valueObject instanceof AbstractConditionalType) {
+            return $valueObject->toScalarOrNull();
         }
 
-        return new static(NullableScalarType::fromScalarOrNull(null));
+        /* @var AbstractValueObject $valueObject */
+        return $valueObject->toArray();
     }
 
-    /**
-     * @return bool|float|int|string|null
-     */
-    public function toScalarOrNull()
+    abstract protected static function fromPrimitive(
+        DataTransferInterface $primitive
+    ): AbstractValueObject;
+
+    public function toArray(): array
     {
-        return $this->nullableScalarType->toScalarOrNull();
+        $array = [];
+
+        foreach (get_object_vars($this) as $property => $valueObject) {
+            $array[$property] = $this->getPrimitive($valueObject);
+        }
+
+        return $array;
     }
 
     public function isNull(): bool
     {
-        return $this->nullableScalarType->isNull();
+        /**
+         * @var AbstractConditionalType $valueObject
+         */
+        foreach (get_object_vars($this) as $valueObject) {
+            if (!$valueObject->isNull()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    /**
-     * The parameter type hint (self) would be very important, because it would
-     * ensure that only value objects of a class are comparable.
-     *
-     * @param $compareObject
-     * @return bool
-     */
-    public function isSame(self $compareObject): bool
+    public function isSame(AbstractValueObject $compareObject): bool
     {
         if (!$compareObject instanceof self) {
             return false;
         }
 
-        return $this->toScalarOrNull() === $compareObject->toScalarOrNull();
+        return $this->toArray() === $compareObject->toArray();
     }
 }

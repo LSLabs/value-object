@@ -3,171 +3,138 @@
 namespace LSLabs\ValueObject\Tests;
 
 use LSLabs\ValueObject\AbstractValueObject;
+use LSLabs\ValueObject\Type\AbstractConditionalType;
+use LSLabs\ValueObject\DataTransferInterface;
 use PHPUnit\Framework\TestCase;
 
 class AbstractValueObjectTest extends TestCase
 {
-    public function conditionMetDataProvider(): array
-    {
-        return [['1342742'], ['23'], ['193']];
-    }
-
-    public function conditionNotMetDataProvider(): array
-    {
-        return [['normal text'], [''], ['text'], [1], [['array']], [0.0]];
-    }
-
-    public function nonIdenticalDataProvider(): array
+    public function notAllTrueDataProvider(): array
     {
         return [
-            ['11', '10'],
-            ['0', '1222249']
+            [true, false],
+            [false, false],
+            [false, true]
         ];
     }
 
-    public function primitiveDataProvider(): array
+    public function test_isNull_ON_all_child_value_objects_are_null_RETURNS_true(): void
     {
-        return [
-            [true],
-            [false],
-            [-1],
-            [-0],
-            [0],
-            [+0],
-            [1],
-            [+1],
-            [-0.1],
-            [-0.0],
-            [0.000],
-            [+0.000],
-            [+0.01],
-            ['text'],
-            ['12932932']
-        ];
-    }
-
-    /**
-     * @param $primitive
-     * @dataProvider primitiveDataProvider
-     */
-    public function test_static_fromPrimitive_RETURNS_self($primitive): void
-    {
-        $this->assertInstanceOf(
-            ValueObject::class,
-            ValueObject::fromPrimitive($primitive)
-        );
-    }
-
-    /**
-     * @param string $string
-     * @dataProvider conditionMetDataProvider
-     */
-    public function test_toScalarOrNull_ON_condition_met_RETURNS_scalar(
-        string $string
-    ): void
-    {
-        $stack = ValueObject::fromPrimitive($string);
-
-        $this->assertTrue(is_scalar($stack->toScalarOrNull()));
-        $this->assertSame($string, $stack->toScalarOrNull());
-    }
-
-    /**
-     * @param $primitive
-     * @dataProvider conditionNotMetDataProvider
-     */
-    public function test_toScalarOrNull_ON_condition_not_met_RETURNS_null(
-        $primitive
-    ): void
-    {
-        $stack = ValueObject::fromPrimitive($primitive);
-
-        $this->assertNull($stack->toScalarOrNull());
-    }
-
-    /**
-     * @param string $string
-     * @dataProvider conditionMetDataProvider
-     */
-    public function test_isNull_ON_condition_met_RETURNS_false(
-        string $string
-    ): void
-    {
-        $stack = ValueObject::fromPrimitive($string);
-
-        $this->assertFalse($stack->isNull());
-    }
-
-    /**
-     * @param $primitive
-     * @dataProvider conditionNotMetDataProvider
-     */
-    public function test_isNull_ON_condition_not_met_RETURNS_true(
-        $primitive
-    ): void
-    {
-        $stack = ValueObject::fromPrimitive($primitive);
+        $primitives = new CompositeDataTransfer();
+        $primitives->a = $this->createMock(AbstractConditionalType::class);
+        $primitives->a->method('isNull')->willReturn(true);
+        $primitives->b = $this->createMock(AbstractConditionalType::class);
+        $primitives->b->method('isNull')->willReturn(true);
+        $stack = CompositeValueObject::fromPrimitive($primitives);
 
         $this->assertTrue($stack->isNull());
     }
 
     /**
-     * @param string $string
-     * @dataProvider conditionMetDataProvider
+     * @param bool $boolean1
+     * @param bool $boolean2
+     * @dataProvider notAllTrueDataProvider
      */
-    public function test_isSame_ON_same_class_and_identical_toScalarOrNull_RETURNS_true(
-        string $string
+    public function test_isNull_ON_not_all_child_value_objects_are_null_RETURNS_false(
+        bool $boolean1,
+        bool $boolean2
     ): void
     {
-        $stack1 = ValueObject::fromPrimitive($string);
-        $stack2 = ValueObject::fromPrimitive($string);
+        $primitives = new CompositeDataTransfer();
+        $primitives->a = $this->createMock(AbstractConditionalType::class);
+        $primitives->a->method('isNull')->willReturn($boolean1);
+        $primitives->b = $this->createMock(AbstractConditionalType::class);
+        $primitives->b->method('isNull')->willReturn($boolean2);
+        $stack = CompositeValueObject::fromPrimitive($primitives);
 
-        $this->assertTrue($stack1->isSame($stack2));
+        $this->assertFalse($stack->isNull());
     }
 
-    /**
-     * @param string $string1
-     * @param string $string2
-     * @dataProvider nonIdenticalDataProvider
-     */
-    public function test_isSame_ON_non_identical_toScalarOrNull_RETURNS_false(
-        string $string1,
-        string $string2
-    ): void
+    public function test_toArray_RETURNS_array(): void
     {
-        $stack1 = ValueObject::fromPrimitive($string1);
-        $stack2 = ValueObject::fromPrimitive($string2);
+        $primitives = new CompositeDataTransfer();
+        $primitives->a = $this->createMock(AbstractConditionalType::class);
+        $primitives->a->method('toScalarOrNull')->willReturn('a string');
+        $primitives->b = $this->createMock(AbstractConditionalType::class);
+        $primitives->b->method('toScalarOrNull')->willReturn('another string');
+        $stack = CompositeValueObject::fromPrimitive($primitives);
 
-        $this->assertFalse($stack1->isSame($stack2));
+        $this->assertEquals(
+            ['a' => 'a string', 'b' => 'another string'],
+            $stack->toArray()
+        );
     }
 
-    /**
-     * @param string $string
-     * @dataProvider conditionMetDataProvider
-     */
-    public function test_isSame_ON_not_same_class_toScalarOrNull_RETURNS_false(
-        string $string
-    ): void
+    public function test_isSame_ON_identical_toArray_RETURNS_true(): void
     {
-        $stack1 = ValueObject::fromPrimitive($string);
+        $array['a'] = 'text';
+        $primitives = new CompositeDataTransfer();
+        $primitives->a = $this->createMock(AbstractConditionalType::class);
+        $primitives->a->method('toScalarOrNull')->willReturn($array['a']);
+
+        $array['b'] = ['a' => 12345, 'b' => 5.6];
+        $primitives->b = $this->createMock(AbstractValueObject::class);
+        $primitives->b->method('toArray')->willReturn($array['b']);
+        $stack = CompositeValueObject::fromPrimitive($primitives);
+
         $mock = $this->createMock(AbstractValueObject::class);
+        $mock->method('toArray')->willReturn($array);
 
-        $this->assertFalse($stack1->isSame($mock));
+        $this->assertTrue($stack->isSame($mock));
+    }
+
+    public function test_isSame_ON_not_identical_toArray_RETURNS_false(): void
+    {
+        $array = [
+            'a' => 'text',
+            'b' => ['a' => 12345, 'b' => 5.6]
+        ];
+        $primitives = new CompositeDataTransfer();
+        $primitives->a = $this->createMock(AbstractConditionalType::class);
+        $primitives->a->method('toScalarOrNull')->willReturn($array['a']);
+        $primitives->b = $this->createMock(AbstractValueObject::class);
+        $primitives->b->method('toArray')->willReturn($array['b']);
+        $stack = CompositeValueObject::fromPrimitive($primitives);
+
+
+        $arrayMock = [
+            'a' => 'text',
+            'b' => ['a' => 12345, 'b' => 5.69]
+        ];
+        $mock = $this->createMock(AbstractValueObject::class);
+        $mock->method('toArray')->willReturn($arrayMock);
+
+        $this->assertFalse($stack->isSame($mock));
     }
 }
 
-final class ValueObject extends AbstractValueObject
+class CompositeValueObject extends AbstractValueObject
 {
-    /*
-     * for testing the condition is to have an integer(ish) string
-     */
-    protected static function conditionMet($primitive): bool
-    {
-        if (!is_string($primitive) OR !preg_match('/^[0-9]+$/', $primitive)) {
-            return false;
-        }
+    protected $a;
 
-        return true;
+    protected $b;
+
+    private function __construct($a, $b)
+    {
+        $this->a = $a;
+        $this->b = $b;
     }
 
+    public static function fromPrimitive(
+        DataTransferInterface $primitives
+    ): AbstractValueObject
+    {
+        /**
+         * Here is the area to create own creation strategies.
+         * @var CompositeDataTransfer $primitives
+         */
+        return new static($primitives->a, $primitives->b);
+    }
+}
+
+class CompositeDataTransfer implements DataTransferInterface
+{
+    public $a;
+
+    public $b;
 }
