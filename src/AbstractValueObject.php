@@ -6,9 +6,7 @@ use LSLabs\ValueObject\Type\AbstractConditionalType;
 
 abstract class AbstractValueObject
 {
-    abstract protected static function fromPrimitive(
-        DataTransferInterface $primitive
-    ): AbstractValueObject;
+    abstract protected static function fromPrimitive($primitive): self;
 
     public function toArray(): array
     {
@@ -45,6 +43,7 @@ abstract class AbstractValueObject
 
     public function isSame(AbstractValueObject $compareObject): bool
     {
+        // TODO: test this if-clause
         if (!$compareObject instanceof self) {
             return false;
         }

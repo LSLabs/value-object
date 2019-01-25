@@ -4,7 +4,6 @@ namespace LSLabs\ValueObject\Tests;
 
 use LSLabs\ValueObject\AbstractValueObject;
 use LSLabs\ValueObject\Type\AbstractConditionalType;
-use LSLabs\ValueObject\DataTransferInterface;
 use PHPUnit\Framework\TestCase;
 
 class AbstractValueObjectTest extends TestCase
@@ -138,9 +137,7 @@ class CompositeValueObject extends AbstractValueObject
         $this->b = $b;
     }
 
-    public static function fromPrimitive(
-        DataTransferInterface $primitives
-    ): AbstractValueObject
+    public static function fromPrimitive($primitives): AbstractValueObject
     {
         /**
          * Here is the area to create own creation strategies.
@@ -150,7 +147,7 @@ class CompositeValueObject extends AbstractValueObject
     }
 }
 
-class CompositeDataTransfer implements DataTransferInterface
+class CompositeDataTransfer
 {
     public $a;
 
