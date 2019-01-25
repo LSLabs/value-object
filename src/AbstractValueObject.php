@@ -6,16 +6,6 @@ use LSLabs\ValueObject\Type\AbstractConditionalType;
 
 abstract class AbstractValueObject
 {
-    private function getPrimitive($valueObject)
-    {
-        if ($valueObject instanceof AbstractConditionalType) {
-            return $valueObject->toScalarOrNull();
-        }
-
-        /* @var AbstractValueObject $valueObject */
-        return $valueObject->toArray();
-    }
-
     abstract protected static function fromPrimitive(
         DataTransferInterface $primitive
     ): AbstractValueObject;
@@ -24,8 +14,16 @@ abstract class AbstractValueObject
     {
         $array = [];
 
-        foreach (get_object_vars($this) as $property => $valueObject) {
-            $array[$property] = $this->getPrimitive($valueObject);
+        foreach (get_object_vars($this) as $property => $value) {
+            if ($value instanceof self) {
+                $subArray = $value->toArray();
+                $array = array_merge($array, $subArray);
+            }
+
+            if ($value instanceof AbstractConditionalType) {
+                $array[$property] = $value->toScalarOrNull();
+            }
+
         }
 
         return $array;
