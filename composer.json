@@ -1,4 +1,9 @@
 {
+    "name": "lslabs/value-object",
+    "description": "Abstract value object class to extend from.",
+    "require": {
+        "php": "^7"
+    },
     "require-dev": {
         "phpunit/phpunit": "^7"
     },
