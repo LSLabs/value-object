@@ -28,19 +28,18 @@ class NullTypeTest extends TestCase
         $this->assertTrue($this->stack->isNull());
     }
 
-    public function test_isSame_ON_identical_toScalarOrNull_RETURNS_true(): void
+    public function test_isSame_ON_same_class_and_identical_toScalarOrNull_RETURNS_true(): void
     {
-        $mock = $this->createMock(ToScalarOrNullInterface::class);
+        $mock = $this->createMock(NullType::class);
         $mock->method('toScalarOrNull')->willReturn(null);
 
         $this->assertTrue($this->stack->isSame($mock));
         $this->assertTrue($this->stack->isSame($this->stack));
     }
 
-    public function test_isSame_ON_non_identical_toScalarOrNull_RETURNS_false(): void
+    public function test_isSame_ON_not_same_class_RETURNS_false(): void
     {
         $mock = $this->createMock(ToScalarOrNullInterface::class);
-        $mock->method('toScalarOrNull')->willReturn(0);
 
         $this->assertFalse($this->stack->isSame($mock));
     }

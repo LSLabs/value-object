@@ -18,6 +18,6 @@ class NullType implements ScalarOrNullTypeInterface
 
     public function isSame(ToScalarOrNullInterface $compare): bool
     {
-        return $this->toScalarOrNull() === $compare->toScalarOrNull();
+        return $compare instanceof self;
     }
 }
