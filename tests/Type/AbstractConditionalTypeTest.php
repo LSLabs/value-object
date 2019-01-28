@@ -124,5 +124,4 @@ final class ConditionalTypeFake extends AbstractConditionalType
 
         return true;
     }
-
 }

@@ -13,14 +13,6 @@ class NullableScalarType implements ToScalarOrNullInterface
         $this->scalarOrNullType = $type;
     }
 
-    private static function getScalarType($scalar): ScalarType
-    {
-        $type = 'double' === gettype($scalar) ? 'float' : gettype($scalar);
-        $method = 'from' . ucfirst($type);
-
-        return ScalarType::$method($scalar);
-    }
-
     public static function fromScalarOrNull($scalarOrNull): self
     {
         if (is_scalar($scalarOrNull)) {
@@ -40,5 +32,13 @@ class NullableScalarType implements ToScalarOrNullInterface
     public function isNull(): bool
     {
         return $this->scalarOrNullType->isNull();
+    }
+
+    private static function getScalarType($scalar): ScalarType
+    {
+        $type = 'double' === gettype($scalar) ? 'float' : gettype($scalar);
+        $method = 'from' . ucfirst($type);
+
+        return ScalarType::$method($scalar);
     }
 }
