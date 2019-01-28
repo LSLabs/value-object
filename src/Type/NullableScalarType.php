@@ -41,10 +41,4 @@ class NullableScalarType implements ToScalarOrNullInterface
     {
         return $this->scalarOrNullType->isNull();
     }
-
-    public function isSame(NullableScalarType $nullableScalarType): bool
-    {
-        return $this->scalarOrNullType->isSame($nullableScalarType);
-    }
-
 }

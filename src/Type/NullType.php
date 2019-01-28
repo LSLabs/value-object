@@ -2,8 +2,6 @@
 
 namespace LSLabs\ValueObject\Type;
 
-use LSLabs\ValueObject\Type\Ability\ToScalarOrNullInterface;
-
 class NullType implements ScalarOrNullTypeInterface
 {
     public function toScalarOrNull()
@@ -14,10 +12,5 @@ class NullType implements ScalarOrNullTypeInterface
     public function isNull(): bool
     {
         return true;
-    }
-
-    public function isSame(ToScalarOrNullInterface $compare): bool
-    {
-        return $compare instanceof self;
     }
 }

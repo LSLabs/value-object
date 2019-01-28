@@ -110,50 +110,6 @@ class AbstractConditionalTypeTest extends TestCase
 
         $this->assertTrue($stack->isNull());
     }
-
-    /**
-     * @param string $string
-     * @dataProvider conditionMetDataProvider
-     */
-    public function test_isSame_ON_same_class_and_identical_toScalarOrNull_RETURNS_true(
-        string $string
-    ): void
-    {
-        $stack1 = ConditionalType::fromPrimitive($string);
-        $stack2 = ConditionalType::fromPrimitive($string);
-
-        $this->assertTrue($stack1->isSame($stack2));
-    }
-
-    /**
-     * @param string $string1
-     * @param string $string2
-     * @dataProvider nonIdenticalDataProvider
-     */
-    public function test_isSame_ON_non_identical_toScalarOrNull_RETURNS_false(
-        string $string1,
-        string $string2
-    ): void
-    {
-        $stack1 = ConditionalType::fromPrimitive($string1);
-        $stack2 = ConditionalType::fromPrimitive($string2);
-
-        $this->assertFalse($stack1->isSame($stack2));
-    }
-
-    /**
-     * @param string $string
-     * @dataProvider conditionMetDataProvider
-     */
-    public function test_isSame_ON_not_same_class_toScalarOrNull_RETURNS_false(
-        string $string
-    ): void
-    {
-        $stack1 = ConditionalType::fromPrimitive($string);
-        $mock = $this->createMock(AbstractConditionalType::class);
-
-        $this->assertFalse($stack1->isSame($mock));
-    }
 }
 
 final class ConditionalType extends AbstractConditionalType

@@ -109,35 +109,4 @@ class NullableScalarTypeTest extends TestCase
 
         $this->assertTrue($stack->isNull());
     }
-
-    /**
-     * @param $scalarOrNull
-     * @dataProvider scalarOrNullDataProvider
-     */
-    public function test_isSame_ON_identical_toScalarOrNull_RETURNS_true(
-        $scalarOrNull
-    ): void
-    {
-        $stack = NullableScalarType::fromScalarOrNull($scalarOrNull);
-        $mock = $this->createMock(NullableScalarType::class);
-        $mock->method('toScalarOrNull')->willReturn($scalarOrNull);
-
-        $this->assertTrue($stack->isSame($mock));
-    }
-
-    /**
-     * @param $scalarOrNull1
-     * @param $scalarOrNull2
-     * @dataProvider nonIdenticalScalarOrNullDataProvider
-     */
-    public function test_isSame_ON_non_identical_toScalarOrNull_RETURNS_false(
-        $scalarOrNull1,
-        $scalarOrNull2
-    ): void
-    {
-        $stack1 = NullableScalarType::fromScalarOrNull($scalarOrNull1);
-        $stack2 = NullableScalarType::fromScalarOrNull($scalarOrNull2);
-
-        $this->assertFalse($stack1->isSame($stack2));
-    }
 }
