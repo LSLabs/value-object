@@ -7,14 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class ScalarTypeTest extends TestCase
 {
-    private function getStackFromScalar($scalar): ScalarType
-    {
-        $type = 'double' === gettype($scalar) ? 'float' : gettype($scalar);
-        $method = 'from' . ucfirst($type);
-
-        return ScalarType::$method($scalar);
-    }
-
     public static function booleanDataProvider(): array
     {
         return [[true], [false]];
@@ -114,11 +106,10 @@ class ScalarTypeTest extends TestCase
      * @depends test_fromFloat_RETURNS_self
      * @depends test_fromString_RETURNS_self
      */
-    public function test_toScalarOrNull_RETURNS_scalar($scalar): void
+    public function test_toScalarOrNull_RETURNS_initially_scalar($scalar): void
     {
         $stack = $this->getStackFromScalar($scalar);
 
-        $this->assertTrue(is_scalar($stack->toScalarOrNull()));
         $this->assertEquals($scalar, $stack->toScalarOrNull());
     }
 
@@ -135,5 +126,13 @@ class ScalarTypeTest extends TestCase
         $stack = $this->getStackFromScalar($scalar);
 
         $this->assertFalse($stack->isNull());
+    }
+
+    private function getStackFromScalar($scalar): ScalarType
+    {
+        $type = 'double' === gettype($scalar) ? 'float' : gettype($scalar);
+        $method = 'from' . ucfirst($type);
+
+        return ScalarType::$method($scalar);
     }
 }
