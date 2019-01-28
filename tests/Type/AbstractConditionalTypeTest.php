@@ -53,8 +53,8 @@ class AbstractConditionalTypeTest extends TestCase
     public function test_static_fromPrimitive_RETURNS_self($primitive): void
     {
         $this->assertInstanceOf(
-            ConditionalType::class,
-            ConditionalType::fromPrimitive($primitive)
+            ConditionalTypeFake::class,
+            ConditionalTypeFake::fromPrimitive($primitive)
         );
     }
 
@@ -62,13 +62,12 @@ class AbstractConditionalTypeTest extends TestCase
      * @param string $string
      * @dataProvider conditionMetDataProvider
      */
-    public function test_toScalarOrNull_ON_condition_met_RETURNS_scalar(
+    public function test_toScalarOrNull_ON_condition_met_RETURNS_initially_scalar(
         string $string
     ): void
     {
-        $stack = ConditionalType::fromPrimitive($string);
+        $stack = ConditionalTypeFake::fromPrimitive($string);
 
-        $this->assertTrue(is_scalar($stack->toScalarOrNull()));
         $this->assertSame($string, $stack->toScalarOrNull());
     }
 
@@ -80,7 +79,7 @@ class AbstractConditionalTypeTest extends TestCase
         $primitive
     ): void
     {
-        $stack = ConditionalType::fromPrimitive($primitive);
+        $stack = ConditionalTypeFake::fromPrimitive($primitive);
 
         $this->assertNull($stack->toScalarOrNull());
     }
@@ -93,7 +92,7 @@ class AbstractConditionalTypeTest extends TestCase
         string $string
     ): void
     {
-        $stack = ConditionalType::fromPrimitive($string);
+        $stack = ConditionalTypeFake::fromPrimitive($string);
 
         $this->assertFalse($stack->isNull());
     }
@@ -106,13 +105,13 @@ class AbstractConditionalTypeTest extends TestCase
         $primitive
     ): void
     {
-        $stack = ConditionalType::fromPrimitive($primitive);
+        $stack = ConditionalTypeFake::fromPrimitive($primitive);
 
         $this->assertTrue($stack->isNull());
     }
 }
 
-final class ConditionalType extends AbstractConditionalType
+final class ConditionalTypeFake extends AbstractConditionalType
 {
     /*
      * for testing the condition is to have an integer(ish) string
