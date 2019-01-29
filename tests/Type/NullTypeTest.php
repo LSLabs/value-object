@@ -8,22 +8,44 @@ use PHPUnit\Framework\TestCase;
 class NullTypeTest extends TestCase
 {
     /**
-     * @var \LSLabs\ValueObject\Type\NullType
+     * @test
      */
-    private $stack;
-
-    public function setUp()
+    public function construct_RETURNS_self(): void
     {
-        $this->stack = new NullType();
+        // act
+        $actual = new NullType();
+
+        // assert
+        $this->assertInstanceOf(NullType::class, $actual);
     }
 
-    public function test_toScalarOrNull_RETURNS_null(): void
+    /**
+     * @test
+     */
+    public function toScalarOrNull_RETURNS_null(): void
     {
-        $this->assertNull($this->stack->toScalarOrNull());
+        // arrange
+        $sut = new NullType();
+
+        // action
+        $actual = $sut->toScalarOrNull();
+
+        // assert
+        $this->assertNull($actual);
     }
 
-    public function test_isNull_RETURNS_true(): void
+    /**
+     * @test
+     */
+    public function isNull_RETURNS_true(): void
     {
-        $this->assertTrue($this->stack->isNull());
+        // arrange
+        $sut = new NullType();
+
+        // act
+        $actual = $sut->isNull();
+
+        // assert
+        $this->assertTrue($actual);
     }
 }

@@ -1,0 +1,10 @@
+Test methods have to be divided in the following four phases:
+// arrange [ON]
+// act [WHEN]
+// assert [RETURNS/SETS/DOES]
+// teardown
+
+Test methods have to be named in the following format:
+methodName_ON_arranged_state_WHEN_action_executed_RETURNS/SETS/DOES_assertion
+
+Meaningless formulations like "ON constructed" or "WHEN called" are not allowed.

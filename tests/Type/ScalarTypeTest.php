@@ -7,6 +7,108 @@ use PHPUnit\Framework\TestCase;
 
 class ScalarTypeTest extends TestCase
 {
+    /**
+     * @test
+     * @param bool $boolean
+     * @dataProvider booleanDataProvider
+     */
+    public function static_fromBoolean_WHEN_boolean_as_parameter_RETURNS_self(
+        bool $boolean
+    ): void {
+        // act
+        $actual = ScalarType::fromBoolean($boolean);
+
+        // assert
+        $this->assertInstanceOf(ScalarType::class, $actual);
+    }
+
+    /**
+     * @test
+     * @param int $integer
+     * @dataProvider integerDataProvider
+     */
+    public function static_fromInteger_WHEN_integer_as_parameter_RETURNS_self(
+        int $integer
+    ): void {
+        // act
+        $actual = ScalarType::fromInteger($integer);
+
+        // assert
+        $this->assertInstanceOf(ScalarType::class, $actual);
+    }
+
+    /**
+     * @test
+     * @param float $float
+     * @dataProvider floatDataProvider
+     */
+    public function static_fromFloat_WHEN_float_as_parameter_RETURNS_self(
+        float $float
+    ): void {
+        // act
+        $actual = ScalarType::fromFloat($float);
+
+        // assert
+        $this->assertInstanceOf(ScalarType::class, $actual);
+    }
+
+    /**
+     * @test
+     * @param string $string
+     * @dataProvider stringDataProvider
+     */
+    public function static_fromString_WHEN_string_as_parameter_RETURNS_self(
+        string $string
+    ): void {
+        // act
+        $actual = ScalarType::fromString($string);
+
+        // assert
+        $this->assertInstanceOf(ScalarType::class, $actual);
+    }
+
+    /**
+     * @test
+     * @param $scalar
+     * @dataProvider scalarDataProvider
+     * @depends static_fromBoolean_WHEN_boolean_as_parameter_RETURNS_self
+     * @depends static_fromFloat_WHEN_float_as_parameter_RETURNS_self
+     * @depends static_fromInteger_WHEN_integer_as_parameter_RETURNS_self
+     * @depends static_fromString_WHEN_string_as_parameter_RETURNS_self
+     */
+    public function toScalarOrNull_RETURNS_initially_scalar($scalar): void
+    {
+        // arrange
+        $sut = $this->getSutFromScalar($scalar);
+
+        // act
+        $actual = $sut->toScalarOrNull();
+
+        // assert
+        $this->assertEquals($scalar, $actual);
+    }
+
+    /**
+     * @test
+     * @param $scalar
+     * @dataProvider scalarDataProvider
+     * @depends static_fromBoolean_WHEN_boolean_as_parameter_RETURNS_self
+     * @depends static_fromFloat_WHEN_float_as_parameter_RETURNS_self
+     * @depends static_fromInteger_WHEN_integer_as_parameter_RETURNS_self
+     * @depends static_fromString_WHEN_string_as_parameter_RETURNS_self
+     */
+    public function isNull_RETURNS_false($scalar): void
+    {
+        // arrange
+        $sut = $this->getSutFromScalar($scalar);
+
+        // act
+        $actual = $sut->isNull();
+
+        // assert
+        $this->assertFalse($actual);
+    }
+
     public static function booleanDataProvider(): array
     {
         return [[true], [false]];
@@ -50,85 +152,7 @@ class ScalarTypeTest extends TestCase
         ];
     }
 
-    /**
-     * @param bool $boolean
-     * @dataProvider booleanDataProvider
-     */
-    public function test_fromBoolean_RETURNS_self(bool $boolean): void
-    {
-        $this->assertInstanceOf(
-            ScalarType::class,
-            ScalarType::fromBoolean($boolean)
-        );
-    }
-
-    /**
-     * @param int $integer
-     * @dataProvider integerDataProvider
-     */
-    public function test_fromInteger_RETURNS_self(int $integer): void
-    {
-        $this->assertInstanceOf(
-            ScalarType::class,
-            ScalarType::fromInteger($integer)
-        );
-    }
-
-    /**
-     * @param float $float
-     * @dataProvider floatDataProvider
-     */
-    public function test_fromFloat_RETURNS_self(float $float): void
-    {
-        $this->assertInstanceOf(
-            ScalarType::class,
-            ScalarType::fromFloat($float)
-        );
-    }
-
-    /**
-     * @param string $string
-     * @dataProvider stringDataProvider
-     */
-    public function test_fromString_RETURNS_self(string $string): void
-    {
-        $this->assertInstanceOf(
-            ScalarType::class,
-            ScalarType::fromString($string)
-        );
-    }
-
-    /**
-     * @param $scalar
-     * @dataProvider scalarDataProvider
-     * @depends test_fromBoolean_RETURNS_self
-     * @depends test_fromInteger_RETURNS_self
-     * @depends test_fromFloat_RETURNS_self
-     * @depends test_fromString_RETURNS_self
-     */
-    public function test_toScalarOrNull_RETURNS_initially_scalar($scalar): void
-    {
-        $stack = $this->getStackFromScalar($scalar);
-
-        $this->assertEquals($scalar, $stack->toScalarOrNull());
-    }
-
-    /**
-     * @param $scalar
-     * @dataProvider scalarDataProvider
-     * @depends test_fromBoolean_RETURNS_self
-     * @depends test_fromInteger_RETURNS_self
-     * @depends test_fromFloat_RETURNS_self
-     * @depends test_fromString_RETURNS_self
-     */
-    public function test_isNull_RETURNS_false($scalar): void
-    {
-        $stack = $this->getStackFromScalar($scalar);
-
-        $this->assertFalse($stack->isNull());
-    }
-
-    private function getStackFromScalar($scalar): ScalarType
+    private function getSutFromScalar($scalar): ScalarType
     {
         $type = 'double' === gettype($scalar) ? 'float' : gettype($scalar);
         $method = 'from' . ucfirst($type);

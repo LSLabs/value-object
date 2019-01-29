@@ -7,17 +7,85 @@ use PHPUnit\Framework\TestCase;
 
 class NullableScalarTypeTest extends TestCase
 {
-    public static function nullDataProvider(): array
+    /**
+     * @test
+     * @param $scalarOrNull
+     * @dataProvider scalarOrNullDataProvider
+     */
+    public function static_fromScalarOrNull_WHEN_scalar_or_null_as_parameter_RETURNS_self(
+        $scalarOrNull
+    ): void {
+        // act
+        $actual = NullableScalarType::fromScalarOrNull($scalarOrNull);
+
+        // assert
+        $this->assertInstanceOf(NullableScalarType::class, $actual);
+    }
+
+    /**
+     * @test
+     * @param $primitive
+     * @dataProvider primitiveDataProvider
+     */
+    public function toScalarOrNull_RETURNS_scalar_or_null($primitive): void
+    {
+        // arrange
+        $expected = is_scalar($primitive) ? $primitive : null;
+        $sut = NullableScalarType::fromScalarOrNull($primitive);
+
+        // act
+        $actual = $sut->toScalarOrNull();
+
+        // assert
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * @test
+     * @param $scalar
+     * @dataProvider scalarDataProvider
+     */
+    public function isNull_ON_instance_from_scalar_RETURNS_false($scalar): void
+    {
+        // arrange
+        $sut = NullableScalarType::fromScalarOrNull($scalar);
+
+        // act
+        $actual = $sut->isNull();
+
+        // assert
+        $this->assertFalse($actual);
+    }
+
+    /**
+     * @test
+     * @param $nonScalar
+     * @dataProvider nonScalarDataProvider
+     */
+    public function isNull_ON_instance_from_non_scalar_RETURNS_true(
+        $nonScalar
+    ): void {
+        // arrange
+        $sut = NullableScalarType::fromScalarOrNull($nonScalar);
+
+        // act
+        $actual = $sut->isNull();
+
+        // assert
+        $this->assertTrue($actual);
+    }
+
+    public function nullDataProvider(): array
     {
         return [[null]];
     }
 
-    public static function scalarDataProvider(): array
+    public function scalarDataProvider(): array
     {
         return ScalarTypeTest::scalarDataProvider();
     }
 
-    public static function scalarOrNullDataProvider(): array
+    public function scalarOrNullDataProvider(): array
     {
         return array_merge(
             static::scalarDataProvider(),
@@ -25,7 +93,7 @@ class NullableScalarTypeTest extends TestCase
         );
     }
 
-    public static function nonScalarDataProvider(): array
+    public function nonScalarDataProvider(): array
     {
         $array = [
             [[0, 1]],
@@ -39,7 +107,7 @@ class NullableScalarTypeTest extends TestCase
         return array_merge($array, $object, $null);
     }
 
-    public static function primitiveDataProvider(): array
+    public function primitiveDataProvider(): array
     {
         return array_merge(
             static::scalarDataProvider(),
@@ -62,51 +130,5 @@ class NullableScalarTypeTest extends TestCase
             [0.123, 0.122],
             ['string', 'string ']
         ];
-    }
-
-    /**
-     * @param $scalarOrNull
-     * @dataProvider scalarOrNullDataProvider
-     */
-    public function test_fromScalarOrNull_RETURNS_self($scalarOrNull): void
-    {
-        $this->assertInstanceOf(
-            NullableScalarType::class,
-            NullableScalarType::fromScalarOrNull($scalarOrNull)
-        );
-    }
-
-    /**
-     * @param $primitive
-     * @dataProvider primitiveDataProvider
-     */
-    public function test_toScalarOrNull_RETURNS_scalar_or_null($primitive): void
-    {
-        $expected = is_scalar($primitive) ? $primitive : null;
-        $stack = NullableScalarType::fromScalarOrNull($primitive);
-
-        $this->assertSame($expected, $stack->toScalarOrNull());
-    }
-
-    /**
-     * @param $scalar
-     * @dataProvider scalarDataProvider
-     */
-    public function test_isNull_ON_scalar_RETURNS_false($scalar): void
-    {
-        $stack = NullableScalarType::fromScalarOrNull($scalar);
-
-        $this->assertFalse($stack->isNull());
-    }
-
-    /**
-     * @param $nonScalar
-     * @dataProvider nonScalarDataProvider
-     */
-    public function test_isNull_ON_non_scalar_RETURNS_true($nonScalar): void
-    {
-        $stack = NullableScalarType::fromScalarOrNull($nonScalar);
-
-        $this->assertTrue($stack->isNull());
     }
 }

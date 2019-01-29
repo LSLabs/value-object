@@ -8,17 +8,12 @@ use PHPUnit\Framework\TestCase;
 
 class AbstractValueObjectTest extends TestCase
 {
-    public function notAllTrueDataProvider(): array
+    /**
+     * @test
+     */
+    public function isNull_ON_all_child_value_objects_null_RETURNS_true(): void
     {
-        return [
-            [true, false],
-            [false, false],
-            [false, true]
-        ];
-    }
-
-    public function test_isNull_ON_all_child_value_objects_are_null_RETURNS_true(): void
-    {
+        // arrange
         $stubA = $this->createMock(AbstractConditionalType::class);
         $stubA->method('isNull')->willReturn(true);
         $stubB = $this->createMock(AbstractConditionalType::class);
@@ -26,21 +21,27 @@ class AbstractValueObjectTest extends TestCase
         $primitives = new CompositeDataTransferFake();
         $primitives->a = $stubA;
         $primitives->b = $stubB;
-        $stack = CompositeValueObjectFake::fromPrimitive($primitives);
+        $sut = CompositeValueObjectFake::fromPrimitive($primitives);
 
-        $this->assertTrue($stack->isNull());
+        // act
+        $actual = $sut->isNull();
+
+        // assert
+        $this->assertTrue($actual);
     }
 
     /**
+     * @test
      * @param bool $boolean1
      * @param bool $boolean2
      * @dataProvider notAllTrueDataProvider
      */
-    public function test_isNull_ON_not_all_child_value_objects_are_null_RETURNS_false(
+    public function isNull_ON_not_all_child_value_objects_null_RETURNS_false(
         bool $boolean1,
         bool $boolean2
     ): void
     {
+        // arrange
         $stubA = $this->createMock(AbstractConditionalType::class);
         $stubA->method('isNull')->willReturn($boolean1);
         $stubB = $this->createMock(AbstractConditionalType::class);
@@ -48,9 +49,22 @@ class AbstractValueObjectTest extends TestCase
         $primitives = new CompositeDataTransferFake();
         $primitives->a = $stubA;
         $primitives->b = $stubB;
-        $stack = CompositeValueObjectFake::fromPrimitive($primitives);
+        $sut = CompositeValueObjectFake::fromPrimitive($primitives);
 
-        $this->assertFalse($stack->isNull());
+        // act
+        $actual = $sut->isNull();
+
+        // assert
+        $this->assertFalse($actual);
+    }
+
+    public function notAllTrueDataProvider(): array
+    {
+        return [
+            [true, false],
+            [false, false],
+            [false, true]
+        ];
     }
 }
 
