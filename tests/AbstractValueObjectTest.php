@@ -19,7 +19,7 @@ class AbstractValueObjectTest extends TestCase
         $primitives['a']->method('isNull')->willReturn(true);
         $primitives['b']->method('isNull')->willReturn(true);
 
-        $sut = CompositeValueObjectFake::fromPrimitive($primitives);
+        $sut = ValueObjectFake::fromPrimitive($primitives);
 
         // act
         $actual = $sut->isNull();
@@ -45,7 +45,7 @@ class AbstractValueObjectTest extends TestCase
         $primitives['a']->method('isNull')->willReturn($boolean1);
         $primitives['b']->method('isNull')->willReturn($boolean2);
 
-        $sut = CompositeValueObjectFake::fromPrimitive($primitives);
+        $sut = ValueObjectFake::fromPrimitive($primitives);
 
         // act
         $actual = $sut->isNull();
@@ -64,7 +64,7 @@ class AbstractValueObjectTest extends TestCase
     }
 }
 
-class CompositeValueObjectFake extends AbstractValueObject
+class ValueObjectFake extends AbstractValueObject
 {
     protected $a;
 
