@@ -14,13 +14,11 @@ class AbstractValueObjectTest extends TestCase
     public function isNull_ON_all_child_value_objects_null_RETURNS_true(): void
     {
         // arrange
-        $stubA = $this->createMock(AbstractConditionalType::class);
-        $stubA->method('isNull')->willReturn(true);
-        $stubB = $this->createMock(AbstractConditionalType::class);
-        $stubB->method('isNull')->willReturn(true);
-        $primitives = new CompositeDataTransferFake();
-        $primitives->a = $stubA;
-        $primitives->b = $stubB;
+        $primitives['a'] = $this->createMock(AbstractConditionalType::class);
+        $primitives['b'] = $this->createMock(AbstractConditionalType::class);
+        $primitives['a']->method('isNull')->willReturn(true);
+        $primitives['b']->method('isNull')->willReturn(true);
+
         $sut = CompositeValueObjectFake::fromPrimitive($primitives);
 
         // act
@@ -42,13 +40,11 @@ class AbstractValueObjectTest extends TestCase
     ): void
     {
         // arrange
-        $stubA = $this->createMock(AbstractConditionalType::class);
-        $stubA->method('isNull')->willReturn($boolean1);
-        $stubB = $this->createMock(AbstractConditionalType::class);
-        $stubB->method('isNull')->willReturn($boolean2);
-        $primitives = new CompositeDataTransferFake();
-        $primitives->a = $stubA;
-        $primitives->b = $stubB;
+        $primitives['a'] = $this->createMock(AbstractConditionalType::class);
+        $primitives['b'] = $this->createMock(AbstractConditionalType::class);
+        $primitives['a']->method('isNull')->willReturn($boolean1);
+        $primitives['b']->method('isNull')->willReturn($boolean2);
+
         $sut = CompositeValueObjectFake::fromPrimitive($primitives);
 
         // act
@@ -82,17 +78,15 @@ class CompositeValueObjectFake extends AbstractValueObject
 
     public static function fromPrimitive($primitives): AbstractValueObject
     {
+        if (!is_array($primitives)) {
+            throw new \UnexpectedValueException(
+                'Inserted primitive should be an array.'
+            );
+        }
+
         /**
-         * Here is the area to create own creation strategies.
-         * @var CompositeDataTransferFake $primitives
+         * Here would be the area to create own creation strategies.
          */
-        return new static($primitives->a, $primitives->b);
+        return new static($primitives['a'], $primitives['b']);
     }
-}
-
-class CompositeDataTransferFake
-{
-    public $a;
-
-    public $b;
 }
